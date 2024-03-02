@@ -13,9 +13,9 @@ This is a simple project that demonstrates the use of the LangChain library to b
 2. Create a Virtual Environment:
     ```bash
     python -m venv .venv
-    Activate the Virtual Environment:
     ```
 
+3. Activate the Virtual Environment:
     - On Windows:
         ```bash
         .venv\Scripts\activate
@@ -27,22 +27,21 @@ This is a simple project that demonstrates the use of the LangChain library to b
         ```
 
 
-3. Install Dependencies:
+4. Install Dependencies:
     ``` bash
     pip install langchain python-dotenv huggingface_hub
     ```
 
 
-4. Set up Environment Variables:
-Create a `.env` file in the project root and add the following variables:
-
+5. Set up Environment Variables:
+    Create a `.env` file in the project root and add the following variables:
     ```
     REPO_ID=repo_id
     HUGGINGFACEHUB_API_TOKEN=your_huggingface_api_token
     ```
 
 
-5. Run the Project:
+6. Run the Project:
     ``` bash
     python main.py
     ```
