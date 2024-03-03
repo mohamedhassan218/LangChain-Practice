@@ -1,6 +1,9 @@
 # Overview
 This is the first project done in this [tutorial](https://youtu.be/lG7Uxts9SXs?si=fa3o3XKhu21Y4VmG) from freeCodeCamp. In the video, he used OpenAI API but here we're using Hugging Face open-source model.
 
+It simply takes the type of your pet and it's color. Our model recommend five names to your pet. Just that!
+
+
 # Getting Started
 1. Clone the Repository:
     ``` bash
@@ -53,4 +56,4 @@ This is the first project done in this [tutorial](https://youtu.be/lG7Uxts9SXs?s
 > Note: Make sure to keep your `.env` file and any sensitive information, such as API tokens, private. Do not push them to your GitHub repository for security reasons.
 
 
-Feel free to customize the code and explore different ideas.
+Feel free to take the code, customize it and try different ideas.
