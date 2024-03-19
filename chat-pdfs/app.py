@@ -7,13 +7,13 @@ from langchain_community.embeddings import HuggingFaceHubEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-from langchain_community.llms import HuggingFaceEndpoint
+from langchain_community.llms import HuggingFaceHub
 from custom_templates import css, bot_template, user_template
 
 
 load_dotenv()
 repo_id = os.environ["REPO_ID"]
-huggingface_token = os.environ["HUGGINGFACEHUB_API_TOKEN"]
+# huggingface_token = os.environ["HUGGINGFACEHUB_API_TOKEN"]
 # repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
 
 
@@ -70,12 +70,12 @@ def get_vectorstore(text_chunks):
     return vectorstore
 
 
-def get_conversation(vectorstore, repo_id, huggingface_token):
-    llm = HuggingFaceEndpoint(
-        repo_id=repo_id, max_length=128, temperature=0.5, token=huggingface_token
+def get_conversation(vectorstore, repo_id):
+    llm = HuggingFaceHub(
+        repo_id=repo_id, model_kwargs={"temperature": 0.5, "max_length": 800}
     )
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-    conversation_chain = ConversationalRetrievalChain(
+    conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm, retriever=vectorstore.as_retriever(), memory=memory
     )
     return conversation_chain
@@ -84,22 +84,25 @@ def get_conversation(vectorstore, repo_id, huggingface_token):
 def handle_user_prompt(user_question):
     response = st.session_state.conversation({"question": user_question})
     st.session_state.chat_history = response["chat_history"]
-
     for i, message in enumerate(st.session_state.chat_history):
         if i % 2 == 0:
-            st.write(
-                user_template.replace("{{MSG}}", message.content),
-                unsafe_allow_html=True,
-            )
+            with st.chat_message("user", avatar="🙋🏻‍♂️"):
+                st.write(message.content)
+            # st.write(
+            #     user_template.replace("{{MSG}}", message.content),
+            #     unsafe_allow_html=True,
+            # )
         else:
-            st.write(
-                bot_template.replace("{{MSG}}", message.content),
-                unsafe_allow_html=True,
-            )
+            index = message.content.rfind("Helpful Answer:")
+            with st.chat_message("assistant", avatar="🤖"):
+                st.write(message.content[index + len("Helpful Answer: ") :])
+            # st.write(
+            #     bot_template.replace("{{MSG}}", message.content[index + len("Helpful Answer: "):]),
+            #     unsafe_allow_html=True,
+            # )
 
 
 def main():
-    # load_dotenv()
     st.set_page_config(page_title="Chat with PDFs", page_icon="robot.png")
     st.write(css, unsafe_allow_html=True)
 
@@ -109,10 +112,11 @@ def main():
         st.session_state.chat_history = None
 
     st.header("Chat with your PDFs :books:")
-    user_question = st.text_input("Enter a prompt . . . ")
+    user_question = st.text_input("Enter Your Questions")
 
     if user_question:
-        handle_user_prompt(user_question)
+        user_prompt = user_question
+        handle_user_prompt(user_prompt)
 
     with st.sidebar:
         st.subheader("Your documents")
@@ -120,17 +124,10 @@ def main():
 
         if st.button("Process"):
             with st.spinner("Processing . . ."):
-                # Get pdf row text.
                 row_text = get_pdf_text(pdf_docs)
-
-                # Get the chunks of our text.
                 text_chunks = get_text_chunks(row_text)
-
-                # Create vector store.
                 vectorstore = get_vectorstore(text_chunks)
-
-                # Create conversation chain.
-                conversation = get_conversation(vectorstore, repo_id, huggingface_token)
+                st.session_state.conversation = get_conversation(vectorstore, repo_id)
 
 
 if __name__ == "__main__":

@@ -28,7 +28,7 @@ css = """
 bot_template = """
 <div class="chat-message bot">
     <div class="avatar">
-        <img src="robot.jpg" style="max-height: 78px; max-width: 78px; border-radius: 50%; object-fit: cover;">
+        <img src="robot.png" style="max-height: 100px; max-width: 100px; border-radius: 50%; object-fit: cover;">
     </div>
     <div class="message">{{MSG}}</div>
 </div>
@@ -37,7 +37,7 @@ bot_template = """
 user_template = """
 <div class="chat-message user">
     <div class="avatar">
-        <img src="user.jpg">
+        <img src="user.png">
     </div>    
     <div class="message">{{MSG}}</div>
 </div>
